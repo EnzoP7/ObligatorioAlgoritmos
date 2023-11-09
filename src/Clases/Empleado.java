@@ -1,6 +1,7 @@
 package Clases;
 
-import java.util.ArrayList;
+import Controladora.Controladora;
+
 import java.util.Scanner;
 
 public class Empleado {
@@ -44,10 +45,10 @@ public class Empleado {
                 '}';
     }
 
-    public static ArrayList<Empleado> listaEmpleados = new ArrayList<Empleado>();
+
 
     private int generarId(){
-        return listaEmpleados.size() + 1;
+        return Controladora.listaEmpleados.size() + 1;
     }
 
     public  static Empleado altaEmpleado(){
@@ -72,7 +73,7 @@ public class Empleado {
         System.out.println("Ingrese Sueldo del Empleado: ");
         int Sueldo = enteros.nextInt();
         Empleado elEmpleado = new Empleado(nombre,apellido,cedula,Telefono,Seccion,cargo,fechaIng,Sueldo);
-        listaEmpleados.add(elEmpleado);
+        Controladora.listaEmpleados.add(elEmpleado);
         System.out.println("Empleado Ingresado Con Exito");
         return elEmpleado;
 

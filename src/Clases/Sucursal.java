@@ -1,17 +1,16 @@
 package Clases;
 
 import Arboles.ArbolEmpleados;
-
-import java.util.ArrayList;
+import Controladora.Controladora;
 
 public class Sucursal {
     private int id;
     private  String nombre;
     private ArbolEmpleados arbolEmpleados;
 
-    public ArrayList<Sucursal> listaSucursales = new ArrayList<>();
+
     private int generarId(){
-        return listaSucursales.size() + 1;
+        return Controladora.sucursales.size() +1 ;
     }
 
     public Sucursal(String nombre, ArbolEmpleados arbolEmpleados) {

@@ -26,16 +26,16 @@ public  class NodoEmpleado {
     }
 
     //Metodo para buscar un nodo dado un empleado
-    public NodoEmpleado buscarNodoPorEmpleado(Empleado empleado){
-        if (this.empleado.equals(empleado)){
-            return  this;
-        }else {
-            for (NodoEmpleado subordinado : subordinados){
-
-            }
-        }
-
-    }
+//    public NodoEmpleado buscarNodoPorEmpleado(Empleado empleado){
+//        if (this.empleado.equals(empleado)){
+//            return  this;
+//        }else {
+//            for (NodoEmpleado subordinado : subordinados){
+//
+//            }
+//        }
+//
+//    }
 
     // region GETERS Y SETERS
     public Empleado getEmpleado() {

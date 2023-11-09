@@ -1,5 +1,7 @@
 package Clases;
 
+import Controladora.Controladora;
+
 import java.util.ArrayList;
 
 public class Empresa {
@@ -8,13 +10,16 @@ public class Empresa {
     private String nombre;
     private ArrayList<Sucursal> sucursales = new ArrayList<>();
 
-    public static ArrayList<Empresa> listaEmpresas = new ArrayList<>();
+
 
     private int generarId(){
-        return  listaEmpresas.size() +1;
+        return Controladora.listaEmpresas.size() + 1;
 
     }
 
+    public Empresa(){
+
+    }
 
     public Empresa( String nombre, ArrayList<Sucursal> sucursales) {
         this.id = generarId();
