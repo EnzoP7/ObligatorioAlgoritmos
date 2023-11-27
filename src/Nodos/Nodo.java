@@ -1,11 +1,13 @@
 package Nodos;
 
+import Clases.Seccion;
+
 public class Nodo {
-    private int dato;
+    private Seccion dato;
     private Nodo izq;
     private Nodo der;
 
-    public Nodo (int dato, Nodo izq, Nodo der){
+    public Nodo (Seccion dato, Nodo izq, Nodo der){
         this.dato = dato;
         this.izq = izq;
         this.der = der;
@@ -19,11 +21,11 @@ public class Nodo {
         return this.der;
     }
 
-    public int getDato(){
+    public Seccion getDato(){
         return this.dato;
     }
 
-    public void setDato(int dato){
+    public void setDato(Seccion dato){
         this.dato = dato;
     }
 

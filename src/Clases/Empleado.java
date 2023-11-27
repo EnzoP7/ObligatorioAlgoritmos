@@ -1,30 +1,30 @@
 package Clases;
 
 import Controladora.Controladora;
-
 import java.util.Scanner;
 
 public class Empleado {
 
     private int id;
+    private int posicion;
     private String nombre;
     private String apellido;
     private int cedula;
     private int telefono;
-    private String seccion;
+    private Seccion seccion;
     private String cargo;
     private String fechaIngreso;
     private int sueldo;
 
-
     public Empleado( String nombre, String apellido, int cedula, int telefono,
-                     String seccion, String cargo, String fechaIngreso, int sueldo) {
+                    String cargo, String fechaIngreso, int sueldo) {
         this.id = generarId();
+        this.posicion=0;
         this.nombre = nombre;
         this.apellido = apellido;
         this.cedula = cedula;
         this.telefono = telefono;
-        this.seccion = seccion;
+        this.seccion = null;
         this.cargo = cargo;
         this.fechaIngreso = fechaIngreso;
         this.sueldo = sueldo;
@@ -36,22 +36,15 @@ public class Empleado {
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
-                ", cedula='" + cedula + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", seccion='" + seccion + '\'' +
-                ", cargo='" + cargo + '\'' +
-                ", fechaIngreso='" + fechaIngreso + '\'' +
-                ", sueldo=" + sueldo +
+                ", posicion=" + posicion +
                 '}';
     }
-
-
 
     private int generarId(){
         return Controladora.listaEmpleados.size() + 1;
     }
 
-    public  static Empleado altaEmpleado(){
+    public static Empleado altaEmpleado(){
         Scanner scanner = new Scanner(System.in);
         Scanner enteros = new Scanner(System.in);
         System.out.println("-----  INGRESO DE DATOS EMPLEADO  -----");
@@ -64,20 +57,16 @@ public class Empleado {
         int cedula = enteros.nextInt();
         System.out.println("Ingrese Telefono del Empleado: ");
         int Telefono = enteros.nextInt();
-        System.out.println("Ingrese Seccion del Empleado: ");
-        String Seccion = scanner.nextLine();
         System.out.println("Ingrese Cargo del Empleado: ");
         String cargo = scanner.nextLine();
         System.out.println("Ingrese Fecha de Ingreso del Empleado: ");
         String fechaIng = scanner.nextLine();
         System.out.println("Ingrese Sueldo del Empleado: ");
         int Sueldo = enteros.nextInt();
-        Empleado elEmpleado = new Empleado(nombre,apellido,cedula,Telefono,Seccion,cargo,fechaIng,Sueldo);
-        Controladora.listaEmpleados.add(elEmpleado);
-        System.out.println("Empleado Ingresado Con Exito");
+
+        Empleado elEmpleado = new Empleado(nombre,apellido,cedula,Telefono,cargo,fechaIng,Sueldo);
+
         return elEmpleado;
-
-
     }
 
 
@@ -85,8 +74,6 @@ public class Empleado {
     public int getId() {
         return id;
     }
-
-
 
     public String getNombre() {
         return nombre;
@@ -102,6 +89,14 @@ public class Empleado {
 
     public void setApellido(String apellido) {
         this.apellido = apellido;
+    }
+
+    public int getPosicion() {
+        return posicion;
+    }
+
+    public void setPosicion(int posicion) {
+        this.posicion = posicion;
     }
 
     public int getCedula() {
@@ -120,11 +115,11 @@ public class Empleado {
         this.telefono = telefono;
     }
 
-    public String getSeccion() {
+    public Seccion getSeccion() {
         return seccion;
     }
 
-    public void setSeccion(String seccion) {
+    public void setSeccion(Seccion seccion) {
         this.seccion = seccion;
     }
 
@@ -153,4 +148,5 @@ public class Empleado {
     }
     // endregion
 
+    
 }

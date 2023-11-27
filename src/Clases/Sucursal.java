@@ -1,25 +1,47 @@
 package Clases;
 
-import Arboles.ArbolEmpleados;
+import java.util.Scanner;
+
+import Arboles.ArbolSuc;
 import Controladora.Controladora;
 
 public class Sucursal {
     private int id;
     private  String nombre;
-    private ArbolEmpleados arbolEmpleados;
-
+    private ArbolSuc arbol;
 
     private int generarId(){
         return Controladora.sucursales.size() +1 ;
     }
 
-    public Sucursal(String nombre, ArbolEmpleados arbolEmpleados) {
-        this.id = generarId();
-        this.nombre = nombre;
-        this.arbolEmpleados = new ArbolEmpleados();
+    @Override
+    public String toString() {
+        return "Sucursal{" +
+            " id='" + getId() + "'" +
+            ", nombre='" + getNombre() + "'" +
+            ", arbol='" + getArbol() + "'" +
+            "}";
     }
 
 
+    public static Sucursal altaSucursal(){
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("-----  INGRESO DE DATOS SUCURSAL  -----");
+        System.out.println("-----------------------------------------");
+        System.out.print("Ingrese Nombre: ");
+        String nombre = scanner.nextLine();
+       
+        Sucursal laSucursal = new Sucursal(nombre);
+
+        return laSucursal;
+    }
+
+    public Sucursal(String nombre) {
+        this.id = generarId();
+        this.nombre = nombre;
+        this.arbol = new ArbolSuc();
+    }
 
     // region GET Y SETERS
     public String getNombre() {
@@ -30,12 +52,12 @@ public class Sucursal {
         this.nombre = nombre;
     }
 
-    public ArbolEmpleados getArbolEmpleados() {
-        return arbolEmpleados;
+    public ArbolSuc getArbol() {
+        return arbol;
     }
 
-    public void setArbolEmpleados(ArbolEmpleados arbolEmpleados) {
-        this.arbolEmpleados = arbolEmpleados;
+    public void setArbol(ArbolSuc arbol) {
+        this.arbol = arbol;
     }
 
     public int getId() {
