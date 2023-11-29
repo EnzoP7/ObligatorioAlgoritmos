@@ -8,6 +8,7 @@ import Nodos.Nodo;
 import Nodos.NodoEmpleado;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import Arboles.Arbol;
@@ -17,7 +18,6 @@ public class Controladora {
 
     // region Instancias
     static Usuario usuario = new Usuario();
-
     // endregion
 
     // region LISTAS
@@ -70,8 +70,8 @@ public class Controladora {
     // #endregion
 
     // region ARBOL EMPLEADOS
-    static ArrayList<Empleado> listaLibres;
-    static NodoEmpleado nodoRaiz;
+    static ArrayList<Empleado> listaLibres; // es la lista que tiene a los empleados sin posicion
+    static NodoEmpleado nodoRaiz; // es un falso arbol para tener la estructura armada
 
     private static void cargarEmpleadosLibres() {
         listaLibres = new ArrayList<>();
@@ -87,6 +87,8 @@ public class Controladora {
         return nuevoNodo;
     }
 
+    // esta funcion parte del nodoraiz y recorre para poner al empleado como sub de
+    // pJefe
     private static void asignarNodo(NodoEmpleado nodo, Empleado elEmp, int pJefe) {
         if (nodo != null) {
             if (nodo.getDato().getId() == pJefe) {
@@ -102,94 +104,174 @@ public class Controladora {
         }
     }
 
+    // esto es para elegir al empleado y de quien es sub
     private static void ingresarEmpleadoArbol(Seccion laSec) {
-        for (Empleado empleado : listaLibres) {
-            if (empleado.getCargo() != "Jefe") {
-                System.out.println(empleado.toString());
+        Empleado elEmp = null;
+        try {
+            int contador = 0;
+            for (Empleado empleado : listaLibres) {
+                if (empleado.getCargo() != "Jefe") {
+                    contador++;
+                    System.out.println(empleado.toString());
+                }
             }
+            if (contador == 0) {
+                System.out.println("No hay Empleados libres!");
+                return;
+            }
+            System.out.print("Elija al Empleado: ");
+            elEmp = buscarEmpleadoLibre(scanNum.nextInt());
+            if (elEmp == null) {
+                System.out.println("No existe ese empleado!");
+                return;
+            }
+            if (elEmp.getCargo() == "Jefe") {
+                System.out.println("Un jefe no puede ser subordinado");
+                return;
+            }
+            elEmp.setSeccion(laSec);
+            modificarEmpleado(elEmp); // modifico para que empleado tenga la seccion en la lista
+            listaLibres.remove(elEmp); // remuevo de libres porque ya esta asignado
+        } catch (InputMismatchException ex) {
+            clearConsole();
+            System.out.println("INGRESE EL ID!!");
+            return;
         }
-        System.out.println("Elija al Empleado");
-        Empleado elEmp = buscarEmpleado(scanNum.nextInt());
-        elEmp.setSeccion(laSec);
-        modificarEmpleado(elEmp);
-        listaLibres.remove(elEmp);
         ArrayList<NodoEmpleado> listaNodosLibres = ArbolUtils.nodosLibres(nodoRaiz);
-
-        for (NodoEmpleado nodo : listaNodosLibres) {
-            System.out.println(nodo.getDato().toString());
-        }
-
-        System.out.println("Quien es el Jefe?");
-        asignarNodo(nodoRaiz, elEmp, scanNum.nextInt());
+        // listaNodosLibres son los nodos del arbol que tiene izq y/o der libre
+        String idsJefes;
+        int pIdJefe;
+        do {
+            clearConsole();
+            idsJefes = "";
+            for (NodoEmpleado nodo : listaNodosLibres) {
+                idsJefes += nodo.getDato().getId() + ",";
+                System.out.println(nodo.getDato().toString());
+            }
+            int inputJefe = 0;
+            try {
+                System.out.print("Quien es el Jefe?: ");
+                inputJefe = scanNum.nextInt();
+                if (!idsJefes.contains(String.valueOf(inputJefe))) {
+                    System.out.println("Ese jefe no existe!");
+                }
+            } catch (InputMismatchException ex) {
+                clearConsole();
+                System.out.println("INGRESE EL ID!!");
+                return;
+            }
+            pIdJefe = inputJefe;
+        } while (!idsJefes.contains(String.valueOf(pIdJefe)));
+        clearConsole();
+        asignarNodo(nodoRaiz, elEmp, pIdJefe);
     }
 
     public static void ingresarArbolEmpleados() {
+        if (sucursales.size() == 0) {
+            System.out.println("Ingrese una sucursal primero!");
+            return;
+        }
+
         cargarEmpleadosLibres();
+        if (listaLibres.size() == 0) {
+            System.out.println("No hay Empleados Libres!!");
+            return;
+        }
 
         System.out.print("Nombre de Seccion: ");
         String nombre = scan.nextLine();
 
-        Sucursal suc;
+        Sucursal suc = null;
         listarSucursal();
         do {
-            System.out.print("Sucursal: ");
-            suc = buscarSucursal(scanNum.nextInt());
-            if (suc == null) {
+            try {
+                System.out.print("Sucursal: ");
+                int sucInput = scanNum.nextInt();
+                suc = buscarSucursal(sucInput);
+                if (suc == null) {
+                    clearConsole();
+                    System.out.println("Sucursal no Válida!!");
+                }
+            } catch (InputMismatchException ex) {
                 clearConsole();
-                System.out.println("Sucursal no Válida!!");
+                System.out.println("INGRESE EL ID!!");
+                return;
             }
         } while (suc == null);
         Seccion laSeccion = new Seccion(suc, nombre);
+        clearConsole();
 
         Empleado asignado = null;
+        int contador = 0;
         do {
             for (Empleado emp : listaLibres) {
                 if (emp.getCargo().equals("Jefe")) {
+                    contador++;
                     System.out.println(emp.toString());
                 }
             }
-            System.out.println("Elija el jefe: ");
-            asignado = buscarEmpleado(scanNum.nextInt());
-            if (asignado == null) {
-                System.out.println("No existe ese JEFE");
+            if (contador == 0) {
+                System.out.println("No hay JEFES!");
+                return;
+            }
+            try {
+                System.out.print("Elija el jefe: ");
+                asignado = buscarEmpleadoLibre(scanNum.nextInt());
+                if (asignado == null) {
+                    System.out.println("No existe ese JEFE");
+                    clearConsole();
+                }
+            } catch (InputMismatchException ex) {
                 clearConsole();
+                System.out.println("INGRESE EL ID!!");
+                return;
             }
         } while (asignado == null);
         asignado.setSeccion(laSeccion);
         modificarEmpleado(asignado);
         listaLibres.remove(asignado);
-        nodoRaiz = crearNodoEmp(asignado);
+        nodoRaiz = crearNodoEmp(asignado); // creo el nodobase del arbol
+        clearConsole();
 
         int opcion = 0;
         do {
-            System.out.println("1- Ingresar Empleado al Arbol");
-            System.out.println("2- Salir");
-            opcion = scanNum.nextInt();
-            switch (opcion) {
-                case 1:
-                    ingresarEmpleadoArbol(laSeccion);
-                    break;
-                case 2:
-                    break;
-                default:
-                    System.out.println("Opcion Incorrecta!");
-                    break;
+            try {
+                System.out.println("1- Ingresar Empleado al Arbol");
+                System.out.println("2- Salir");
+                opcion = scanNum.nextInt();
+                clearConsole();
+                switch (opcion) {
+                    case 1:
+                        ingresarEmpleadoArbol(laSeccion);
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        System.out.println("Opcion Incorrecta!");
+                        break;
+                }
+            } catch (InputMismatchException ex) {
+                clearConsole();
+                System.out.println("INGRESE UN NUMERO!!");
+                return;
             }
         } while (opcion != 2);
         clearConsole();
         laSeccion.getArbol().ingresarPos(nodoRaiz, 0, true);
+        // la funcion de arriba ingresa el falso arbol al arbol de la seccion dandole
+        // las posiciones que correspondan
         secciones.add(laSeccion);
     }
     // endregion ARBOL EMPLEADOS
 
-    //region ARBOL SUCURSAL
-    static ArrayList<Seccion> listaSecLibres;
+    // region ARBOL SUCURSAL
+    static ArrayList<Seccion> listaSecLibres; // lista de secciones que no estan asignadas a sucursales
     static Nodo nodoSecRaiz;
 
     private static void cargarSeccionesLibres(int pId) {
         listaSecLibres = new ArrayList<>();
         for (Seccion sec : secciones) {
-            if (sec.getPosicion() == 0 && sec.getSucursal().getId()==pId) {
+            if (sec.getPosicion() == 0 && sec.getSucursal().getId() == pId) {
                 listaSecLibres.add(sec);
             }
         }
@@ -216,74 +298,149 @@ public class Controladora {
     }
 
     private static void ingresarSeccionArbol() {
-        for (Seccion sec : listaSecLibres) {
-            System.out.println(sec.toString());
-        }
-        System.out.println("Elija la Seccion: ");
-        Seccion sec = buscarSeccion(scanNum.nextInt());
-        listaSecLibres.remove(sec);
+
+        Seccion sec = null;
+        do {
+            clearConsole();
+            try {
+                int contador=0;
+                for (Seccion seccion : listaSecLibres) {
+                    System.out.println(seccion.toString());
+                    contador++;
+                }
+                if(contador==0){
+                    clearConsole();
+                    System.out.println("NO HAY SECCIONES LIBRES!");
+                    return;
+                }
+               
+                System.out.println("Elija la Seccion: ");
+                sec = buscarSeccionLibre(scanNum.nextInt());
+                if (sec == null) {
+                    System.out.println("No existe esa sección!");
+                } else {
+                    listaSecLibres.remove(sec);
+                }
+                clearConsole();
+            } catch (InputMismatchException ex) {
+                clearConsole();
+                System.out.println("INGRESE EL ID!!");
+                return;
+            }
+        } while (sec == null);
 
         ArrayList<Nodo> listaNodosLibres = ArbolUtils.nodosSecLibres(nodoSecRaiz);
 
-        for (Nodo nodo : listaNodosLibres) {
-            System.out.println(nodo.getDato().toString());
-        }
+        String idsJefes;
+        int pIdJefe;
+        do {
+            clearConsole();
+            idsJefes = "";
+            for (Nodo nodo : listaNodosLibres) {
+                idsJefes += nodo.getDato().getId() + ",";
+                System.out.println(nodo.getDato().toString());
+            }
+            int inputJefe = 0;
+            try {
+                System.out.print("Quien es el Jefe?: ");
+                inputJefe = scanNum.nextInt();
+                if (!idsJefes.contains(String.valueOf(inputJefe))) {
+                    System.out.println("Ese jefe no existe!");
+                }
+            } catch (InputMismatchException ex) {
+                clearConsole();
+                System.out.println("INGRESE EL ID!!");
+                return;
+            }
+            pIdJefe = inputJefe;
+        } while (!idsJefes.contains(String.valueOf(pIdJefe)));
+        clearConsole();
+        // for (Nodo nodo : listaNodosLibres) {
+        // System.out.println(nodo.getDato().toString());
+        // }
 
-        System.out.println("Quien es el Jefe?");
-        asignarNodoSec(nodoSecRaiz, sec, scanNum.nextInt());
+        // System.out.println("Quien es el Jefe?");
+        asignarNodoSec(nodoSecRaiz, sec, pIdJefe);
     }
 
     public static void ingresarArbolSucursal() {
-        Sucursal suc;
-        listarSucursal();
+        if (sucursales.size() == 0) {
+            System.out.println("NO HAY SUCURSALES!");
+            return;
+        }
+        Sucursal suc = null;
         do {
-            System.out.print("Sucursal: ");
-            suc = buscarSucursal(scanNum.nextInt());
-            if (suc == null) {
+            try {
+                listarSucursal();
+                System.out.print("Sucursal: ");
+                suc = buscarSucursal(scanNum.nextInt());
+                if (suc == null) {
+                    clearConsole();
+                    System.out.println("Sucursal no Válida!!");
+                }
+            } catch (InputMismatchException ex) {
                 clearConsole();
-                System.out.println("Sucursal no Válida!!");
+                System.out.println("INGRESE EL ID!!");
+                return;
             }
         } while (suc == null);
-
+        clearConsole();
         cargarSeccionesLibres(suc.getId());
+        if (listaSecLibres.size() == 0) {
+            System.out.println("NO HAY SECCIONES LIBRES!");
+            return;
+        }
 
         Seccion asignada = null;
         do {
-            for (Seccion sec : listaSecLibres) {
-                System.out.println(sec.toString());
-            }
-            System.out.println("Elija el jefe: ");
-            asignada = buscarSeccion(scanNum.nextInt());
-            if (asignada == null) {
-                System.out.println("No existe ese JEFE");
+            clearConsole();
+            try {
+                for (Seccion sec : listaSecLibres) {
+                    System.out.println(sec.toString());
+                }
+                System.out.print("Elija el jefe: ");
+                asignada = buscarSeccionLibre(scanNum.nextInt());
+                if (asignada == null) {
+                    clearConsole();
+                    System.out.println("No existe ese JEFE");
+                }
+            } catch (InputMismatchException ex) {
                 clearConsole();
+                System.out.println("INGRESE EL ID!!");
+                return;
             }
         } while (asignada == null);
 
         listaSecLibres.remove(asignada);
         nodoSecRaiz = crearNodoSec(asignada);
 
+        clearConsole();
         int opcion = 0;
         do {
-            System.out.println("1- Ingresar Sección al Arbol");
-            System.out.println("2- Salir");
-            opcion = scanNum.nextInt();
-            switch (opcion) {
-                case 1:
-                    ingresarSeccionArbol();
-                    break;
-                case 2:
-                    break;
-                default:
-                    System.out.println("Opcion Incorrecta!");
-                    break;
+            try {
+                System.out.println("1- Ingresar Sección al Arbol");
+                System.out.println("2- Salir");
+                opcion = scanNum.nextInt();
+                switch (opcion) {
+                    case 1:
+                        ingresarSeccionArbol();
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        System.out.println("Opcion Incorrecta!");
+                        break;
+                }
+            } catch (InputMismatchException ex) {
+                System.out.println("INGRESE UN NUMERO!!");
+                return;
             }
         } while (opcion != 2);
         clearConsole();
         suc.getArbol().ingresarPos(nodoSecRaiz, 0, true);
         modificarSucursal(suc);
     }
-    //endregion
+    // endregion
 
     // region Sucursales
     public static boolean altaSucursal() {
@@ -305,9 +462,14 @@ public class Controladora {
     }
 
     public static void listarSucursal() {
+        System.out.println("----- LISTA SUCURSALES -----");
+        int contador = 0;
         for (Sucursal suc : sucursales) {
             System.out.println(suc.toString());
+            contador++;
         }
+        if (contador == 0)
+            System.out.println("NO HAY SUCURSALES!!");
     }
 
     public static Sucursal buscarSucursal(int pId) {
@@ -320,14 +482,25 @@ public class Controladora {
     }
 
     public static void listarSucursalMayorMenor() {
-        listarSucursal();
-        System.out.print("Elige Sucursal: ");
-        Sucursal laSuc=buscarSucursal(scanNum.nextInt());
-        if(laSuc==null){
-            System.out.println("No existe esa Sucursal!!");
+        if (sucursales.size() == 0) {
+            System.out.println("NO hay Sucursales!");
+            return;
         }
-
-        laSuc.getArbol().imprimirMayorMenor();
+        try {
+            listarSucursal();
+            System.out.print("Elige Sucursal: ");
+            Sucursal laSuc = buscarSucursal(scanNum.nextInt());
+            clearConsole();
+            if (laSuc == null) {
+                System.out.println("No existe esa Sucursal!!");
+            } else {
+                laSuc.getArbol().imprimirMayorMenor();
+            }
+        } catch (InputMismatchException ex) {
+            clearConsole();
+            System.out.println("INGRESE EL ID!!");
+            return;
+        }
     }
     // endregion
 
@@ -339,9 +512,24 @@ public class Controladora {
     }
 
     public static void listarSecciones() {
+        System.out.println("----- LISTA SECCIONES -----");
+        int contador = 0;
         for (Seccion sec : secciones) {
+            contador++;
             System.out.println(sec.toString());
         }
+        if (contador == 0) {
+            System.out.println("NO HAY SECCIONES!!");
+        }
+    }
+
+    public static Seccion buscarSeccionLibre(int pId) {
+        for (Seccion sec : listaSecLibres) {
+            if (sec.getId() == pId) {
+                return sec;
+            }
+        }
+        return null;
     }
 
     public static Seccion buscarSeccion(int pId) {
@@ -373,6 +561,15 @@ public class Controladora {
         }
     }
 
+    public static Empleado buscarEmpleadoLibre(int pId) {
+        for (Empleado empleado : listaLibres) {
+            if (empleado.getId() == pId) {
+                return empleado;
+            }
+        }
+        return null;
+    }
+
     public static Empleado buscarEmpleado(int pId) {
         for (Empleado empleado : listaEmpleados) {
             if (empleado.getId() == pId) {
@@ -383,39 +580,72 @@ public class Controladora {
     }
 
     public static void listarEmpleado() {
+        System.out.println("----- LISTA EMPLEADOS -----");
+        int contador = 0;
         for (Empleado empleado : listaEmpleados) {
+            contador++;
             System.out.println(empleado.toString());
+        }
+        if (contador == 0) {
+            System.out.println("NO HAY EMPLEADOS!");
         }
     }
 
     public static void listarSeccionMayorMenor() {
+        if (secciones.size() == 0) {
+            System.out.println("No hay Secciones!");
+            return;
+        }
         listarSecciones();
-        System.out.print("Elige Seccion: ");
-        Seccion laSec=buscarSeccion(scanNum.nextInt());
-        if(laSec==null){
-            System.out.println("No existe esa Seccion!!");
+        try {
+            System.out.print("Elige Seccion: ");
+            Seccion laSec = buscarSeccion(scanNum.nextInt());
+            clearConsole();
+            if (laSec == null) {
+                System.out.println("No existe esa Seccion!!");
+            } else {
+                laSec.getArbol().imprimirMayorMenor();
+            }
+        } catch (InputMismatchException ex) {
+            clearConsole();
+            System.out.println("INGRESE EL ID!!");
+            return;
         }
 
-        laSec.getArbol().imprimirMayorMenor();
     }
 
     public static void datosEmpSub() {
-        listarEmpleado();
-
+        if (listaEmpleados.size() == 0) {
+            System.out.println("No hay Empleados!");
+            return;
+        }
         Empleado unEmp = null;
         do {
-            System.out.print("Ingrese Empleado: ");
-            unEmp = buscarEmpleado(scanNum.nextInt());
-            if (unEmp == null) {
-                System.out.println("No existe el Empleado");
+            try {
+                clearConsole();
+                listarEmpleado();
+                System.out.print("Ingrese Empleado: ");
+                unEmp = buscarEmpleado(scanNum.nextInt());
+                if (unEmp == null) {
+                    System.out.println("No existe el Empleado");
+                }
+            } catch (InputMismatchException ex) {
+                clearConsole();
+                System.out.println("INGRESE EL ID!!");
+                return;
             }
         } while (unEmp == null);
 
         Seccion unaSec = null;
+        clearConsole();
+        if (unEmp.getSeccion() == null) {
+            System.out.println("El Empleado no esta asignado!");
+            return;
+        }
         unaSec = buscarSeccion(unEmp.getSeccion().getId());
         if (unaSec == null) {
-            System.out.println("No existe la seccion");
-        }else{
+            System.out.println("El empleado no esta asignado a ninguna Seccion!");
+        } else {
             unaSec.getArbol().imprimirPreEmp(unaSec.getArbol().buscarEmp(unEmp.getPosicion()));
         }
     }

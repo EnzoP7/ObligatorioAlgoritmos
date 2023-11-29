@@ -42,7 +42,7 @@ public class Arbol {
 
     private void imprimirPreOG(NodoEmpleado nodo) {
         if (nodo != null) {
-            System.out.print(nodo.dato + " ");
+            System.out.println(nodo.dato + " ");
             imprimirPreOG(nodo.izq);
             imprimirPreOG(nodo.der);
         }
@@ -86,7 +86,7 @@ public class Arbol {
     // region INGRESAR POSICIONES
     public void ingresarPos(Nodos.NodoEmpleado nodo, int lastPos, boolean dir) {
         if (nodo != null) {
-            System.out.print(nodo.getDato() + " ");
+            // System.out.print(nodo.getDato() + " ");
             int cantTotal = contarNodosEmp(nodo);
             int cantDir = 0;
             if (!dir) {
@@ -96,6 +96,8 @@ public class Arbol {
                 cantDir = contarNodosEmp(nodo.getDer());
                 nodo.getDato().setPosicion(cantTotal - cantDir + lastPos);
             }
+            //lo de arriba le pone la posicion segun el "arbol" que le pasamos por nodo para
+            //que al ingresar en el arbol quede en el mismo orden
             insertar(nodo.getDato());
             ingresarPos(nodo.getIzq(), nodo.getDato().getPosicion(), false);
             ingresarPos(nodo.getDer(), nodo.getDato().getPosicion(), true);

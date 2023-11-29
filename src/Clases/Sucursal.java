@@ -19,7 +19,6 @@ public class Sucursal {
         return "Sucursal{" +
             " id='" + getId() + "'" +
             ", nombre='" + getNombre() + "'" +
-            ", arbol='" + getArbol() + "'" +
             "}";
     }
 
@@ -27,13 +26,11 @@ public class Sucursal {
     public static Sucursal altaSucursal(){
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("-----  INGRESO DE DATOS SUCURSAL  -----");
-        System.out.println("-----------------------------------------");
+        System.out.println("-----  INGRESO DE DATOS SUCURSAL  ----- \n");
         System.out.print("Ingrese Nombre: ");
         String nombre = scanner.nextLine();
        
         Sucursal laSucursal = new Sucursal(nombre);
-
         return laSucursal;
     }
 

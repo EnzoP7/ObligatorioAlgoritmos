@@ -43,6 +43,7 @@ public class ArbolSuc {
     // MOSTRAR SECCIONES MAYOR A MENOR JERARQUIA
     private void imprimirMayorMenor(Nodo nodo) {
         if (nodo == null) {
+            System.out.println("NO TIENE SECCIONES!!");
             return;
         }
 
@@ -51,7 +52,9 @@ public class ArbolSuc {
 
         while (!lista.isEmpty()) {
             Nodo actual = lista.remove(0);
+            System.out.println("\n----------------------------------------------------------------------");
             System.out.println(actual.dato);
+            System.out.println("----------------------------------------------------------------------");
             actual.dato.getArbol().imprimirMayorMenor();
 
             if (actual.izq != null) {

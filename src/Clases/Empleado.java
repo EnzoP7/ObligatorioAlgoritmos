@@ -1,6 +1,8 @@
 package Clases;
 
 import Controladora.Controladora;
+
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Empleado {
@@ -16,10 +18,10 @@ public class Empleado {
     private String fechaIngreso;
     private int sueldo;
 
-    public Empleado( String nombre, String apellido, int cedula, int telefono,
-                    String cargo, String fechaIngreso, int sueldo) {
+    public Empleado(String nombre, String apellido, int cedula, int telefono,
+            String cargo, String fechaIngreso, int sueldo) {
         this.id = generarId();
-        this.posicion=0;
+        this.posicion = 0;
         this.nombre = nombre;
         this.apellido = apellido;
         this.cedula = cedula;
@@ -40,37 +42,41 @@ public class Empleado {
                 '}';
     }
 
-    private int generarId(){
+    private int generarId() {
         return Controladora.listaEmpleados.size() + 1;
     }
 
-    public static Empleado altaEmpleado(){
+    public static Empleado altaEmpleado() {
         Scanner scanner = new Scanner(System.in);
         Scanner enteros = new Scanner(System.in);
-        System.out.println("-----  INGRESO DE DATOS EMPLEADO  -----");
-        System.out.println("-----------------------------------------");
-        System.out.println("Ingrese Nombre del Empleado: ");
-        String nombre = scanner.nextLine();
-        System.out.println("Ingrese Apellido del Empleado: ");
-        String apellido = scanner.nextLine();
-        System.out.println("Ingrese Cedula del Empleado: ");
-        int cedula = enteros.nextInt();
-        System.out.println("Ingrese Telefono del Empleado: ");
-        int Telefono = enteros.nextInt();
-        System.out.println("Ingrese Cargo del Empleado: ");
-        String cargo = scanner.nextLine();
-        System.out.println("Ingrese Fecha de Ingreso del Empleado: ");
-        String fechaIng = scanner.nextLine();
-        System.out.println("Ingrese Sueldo del Empleado: ");
-        int Sueldo = enteros.nextInt();
+        System.out.println("-----  INGRESO DE DATOS EMPLEADO  ----- \n");
 
-        Empleado elEmpleado = new Empleado(nombre,apellido,cedula,Telefono,cargo,fechaIng,Sueldo);
+        try {
+            System.out.print("Ingrese Nombre del Empleado: ");
+            String nombre = scanner.nextLine();
+            System.out.print("Ingrese Apellido del Empleado: ");
+            String apellido = scanner.nextLine();
+            System.out.print("Ingrese Cedula del Empleado: ");
+            int cedula = enteros.nextInt();
+            System.out.print("Ingrese Telefono del Empleado: ");
+            int Telefono = enteros.nextInt();
+            System.out.print("Ingrese Cargo del Empleado: ");
+            String cargo = scanner.nextLine();
+            System.out.print("Ingrese Fecha de Ingreso del Empleado: ");
+            String fechaIng = scanner.nextLine();
+            System.out.print("Ingrese Sueldo del Empleado: ");
+            int Sueldo = enteros.nextInt();
 
-        return elEmpleado;
+            Empleado elEmpleado = new Empleado(nombre, apellido, cedula, Telefono, cargo, fechaIng, Sueldo);
+
+            return elEmpleado;
+        } catch (InputMismatchException ex) {
+            System.out.println("Ingrese numeros donde se deba!!");
+        }
+        return null;
     }
 
-
-    // region  GET Y SETERS
+    // region GET Y SETERS
     public int getId() {
         return id;
     }
@@ -148,5 +154,4 @@ public class Empleado {
     }
     // endregion
 
-    
 }

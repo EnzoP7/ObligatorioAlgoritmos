@@ -64,10 +64,9 @@ public class Seccion {
     public String toString() {
         return "Seccion{" +
             " id='" + getId() + "'" +
-            ", sucursal='" + getSucursal() + "'" +
+            ", sucursal='" + getSucursal().getId() + "'" +
             ", posicion='" + getPosicion() + "'" +
             ", nombre='" + getNombre() + "'" +
-            ", arbol='" + getArbol() + "'" +
             "}";
     }
 
