@@ -1,6 +1,7 @@
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import Clases.Usuario;
 import Controladora.Controladora;
 
 public class Sistema {
@@ -9,8 +10,24 @@ public class Sistema {
 
     public static void main(String[] args) {
         Controladora.datosPrueba();
-        int opcion = 0;
         Controladora.clearConsole();
+        Usuario elUser= new Usuario("admin","admin");
+        Boolean logued=false;
+        do{
+            System.out.print("Username: ");
+            String username=inputText.nextLine();
+            System.out.print("Password: ");
+            String password=inputText.nextLine();
+            if(username.equals(elUser.getNombre()) && password.equals(elUser.getContrasenia())){
+                logued=true;
+                Controladora.clearConsole();
+                System.out.println("INICIO EXITOSO!");
+            }else{
+                Controladora.clearConsole();
+                System.out.println("DATOS INCORRECTOS!!");
+            }
+        }while(!logued);
+        int opcion = 0;
         do {
             System.out.println("-----  MENU  ----- \n");
 

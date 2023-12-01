@@ -2,8 +2,8 @@ package Clases;
 
 public class Usuario {
 
-        private String nombre = "ERNESTA ERES MUY BELLA";
-        private String contrasenia = "BARA BARA BARA; BERE BERE BERE";
+        private String nombre;
+        private String contrasenia;
 
         public String getNombre() {
             return nombre;
