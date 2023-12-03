@@ -494,7 +494,7 @@ public class Controladora {
             if (laSuc == null) {
                 System.out.println("No existe esa Sucursal!!");
             } else {
-                laSuc.getArbol().imprimirMayorMenor();
+                laSuc.getArbol().imprimirMayorMenorRecu();
             }
         } catch (InputMismatchException ex) {
             clearConsole();
@@ -604,7 +604,7 @@ public class Controladora {
             if (laSec == null) {
                 System.out.println("No existe esa Seccion!!");
             } else {
-                laSec.getArbol().imprimirMayorMenor();
+                laSec.getArbol().imprimirMayorMenorRecu();
             }
         } catch (InputMismatchException ex) {
             clearConsole();

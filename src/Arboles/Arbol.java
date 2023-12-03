@@ -48,32 +48,56 @@ public class Arbol {
         }
     }
 
-    private void imprimirMayorMenor(NodoEmpleado nodo) {
+    // private void imprimirMayorMenor(NodoEmpleado nodo) {
+    //     if (nodo == null) {
+    //         return;
+    //     }
+
+    //     ArrayList<NodoEmpleado> lista = new ArrayList<>();
+    //     lista.add(raiz);
+
+    //     while (!lista.isEmpty()) {
+    //         NodoEmpleado actual = lista.remove(0);
+    //         System.out.println(actual.dato);
+
+    //         if (actual.izq != null) {
+    //             lista.add(actual.izq);
+    //         }
+    //         if (actual.der != null) {
+    //             lista.add(actual.der);
+    //         }
+    //     }
+    // }
+
+    private void imprimirMayorMenorRecu(NodoEmpleado nodo, ArrayList<NodoEmpleado> lista) {
         if (nodo == null) {
+            System.out.println("La seccion no tiene Empleados!");
             return;
         }
+        System.out.println(nodo.dato);
 
-        ArrayList<NodoEmpleado> lista = new ArrayList<>();
-        lista.add(raiz);
-
-        while (!lista.isEmpty()) {
-            NodoEmpleado actual = lista.remove(0);
-            System.out.println(actual.dato);
-
-            if (actual.izq != null) {
-                lista.add(actual.izq);
-            }
-            if (actual.der != null) {
-                lista.add(actual.der);
-            }
+        if (nodo.izq != null) {
+            lista.add(nodo.izq);
         }
+        if (nodo.der != null) {
+            lista.add(nodo.der);
+        }
+        if (lista.isEmpty()) {
+            return;
+        }
+        imprimirMayorMenorRecu(lista.remove(0),lista);
     }
 
-    public void imprimirMayorMenor(){
-        imprimirMayorMenor(raiz);
+    public void imprimirMayorMenorRecu() {
+        ArrayList<NodoEmpleado> lista = new ArrayList<>();
+        imprimirMayorMenorRecu(raiz, lista);
     }
 
-    public void imprimirPreEmp(NodoEmpleado nodo){
+    // public void imprimirMayorMenor() {
+    //     imprimirMayorMenor(raiz);
+    // }
+
+    public void imprimirPreEmp(NodoEmpleado nodo) {
         imprimirPreOG(nodo);
         System.out.println();
     }
@@ -91,13 +115,14 @@ public class Arbol {
             int cantDir = 0;
             if (!dir) {
                 cantDir = contarNodosEmp(nodo.getIzq());
-                nodo.getDato().setPosicion(lastPos - (cantTotal - cantDir) );
+                nodo.getDato().setPosicion(lastPos - (cantTotal - cantDir));
             } else {
                 cantDir = contarNodosEmp(nodo.getDer());
                 nodo.getDato().setPosicion(cantTotal - cantDir + lastPos);
             }
-            //lo de arriba le pone la posicion segun el "arbol" que le pasamos por nodo para
-            //que al ingresar en el arbol quede en el mismo orden
+            // lo de arriba le pone la posicion segun el "arbol" que le pasamos por nodo
+            // para
+            // que al ingresar en el arbol quede en el mismo orden
             insertar(nodo.getDato());
             ingresarPos(nodo.getIzq(), nodo.getDato().getPosicion(), false);
             ingresarPos(nodo.getDer(), nodo.getDato().getPosicion(), true);

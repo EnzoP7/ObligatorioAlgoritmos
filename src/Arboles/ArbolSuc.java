@@ -41,34 +41,61 @@ public class ArbolSuc {
     }
 
     // MOSTRAR SECCIONES MAYOR A MENOR JERARQUIA
-    private void imprimirMayorMenor(Nodo nodo) {
+    private void imprimirMayorMenorRecu(Nodo nodo, ArrayList<Nodo> lista) {
         if (nodo == null) {
             System.out.println("NO TIENE SECCIONES!!");
             return;
         }
+        System.out.println("\n----------------------------------------------------------------------");
+        System.out.println(nodo.dato);
+        System.out.println("----------------------------------------------------------------------");
+        nodo.dato.getArbol().imprimirMayorMenorRecu();
 
-        ArrayList<Nodo> lista = new ArrayList<>();
-        lista.add(raiz);
-
-        while (!lista.isEmpty()) {
-            Nodo actual = lista.remove(0);
-            System.out.println("\n----------------------------------------------------------------------");
-            System.out.println(actual.dato);
-            System.out.println("----------------------------------------------------------------------");
-            actual.dato.getArbol().imprimirMayorMenor();
-
-            if (actual.izq != null) {
-                lista.add(actual.izq);
-            }
-            if (actual.der != null) {
-                lista.add(actual.der);
-            }
+        if (nodo.izq != null) {
+            lista.add(nodo.izq);
         }
+        if (nodo.der != null) {
+            lista.add(nodo.der);
+        }
+        if (lista.isEmpty()) {
+            return;
+        }
+        imprimirMayorMenorRecu(lista.remove(0),lista);
     }
 
-    public void imprimirMayorMenor(){
-        imprimirMayorMenor(raiz);
+    public void imprimirMayorMenorRecu() {
+        ArrayList<Nodo> lista = new ArrayList<>();
+        imprimirMayorMenorRecu(raiz, lista);
     }
+
+    // private void imprimirMayorMenor(Nodo nodo) {
+    //     if (nodo == null) {
+    //         System.out.println("NO TIENE SECCIONES!!");
+    //         return;
+    //     }
+
+    //     ArrayList<Nodo> lista = new ArrayList<>();
+    //     lista.add(raiz);
+
+    //     while (!lista.isEmpty()) {
+    //         Nodo actual = lista.remove(0);
+    //         System.out.println("\n----------------------------------------------------------------------");
+    //         System.out.println(actual.dato);
+    //         System.out.println("----------------------------------------------------------------------");
+    //         actual.dato.getArbol().imprimirMayorMenorRecu();
+
+    //         if (actual.izq != null) {
+    //             lista.add(actual.izq);
+    //         }
+    //         if (actual.der != null) {
+    //             lista.add(actual.der);
+    //         }
+    //     }
+    // }
+
+    // public void imprimirMayorMenor(){
+    //     imprimirMayorMenor(raiz);
+    // }
 
     // region INGRESAR POSICIONES
     public void ingresarPos(Nodos.Nodo nodo, int lastPos, boolean dir) {
